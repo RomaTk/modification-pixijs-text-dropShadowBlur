@@ -110,39 +110,42 @@ const getSingLine = function (amount, sign) {
 	return text;
 }
 
-const mainDecorations = function (pixiText) {
+const mainDecorations = function (pixiText, originalText) {
+	const wasText = pixiText.text;
+	let words = getSplitedWords(wasText);
 	if (pixiText.style.wordWrap) {
-		const wasText = pixiText.text;
-		let words = getSplitedWords(wasText);
 		if (pixiText.style.breakWords) {
 			words = getSplitedWordsAccordingWidth(pixiText, words);
 		}
-		const breaks = getBreaks(pixiText, words);
-		const signSize = calcSignSize(pixiText);
-		setPropertiesForCopy(pixiText);
-		const newLinesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize['\n'].height);
-		const newSpacesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize[' '].width);
-		let lastText = getSingLine(newLinesAmount, '\n');
-		for (let str of breaks) {
-			lastText += getSingLine(newSpacesAmount, ' ') + str + getSingLine(newSpacesAmount, ' ') + '\n';
-		}
-		lastText += getSingLine(newLinesAmount - 1, '\n');
-		pixiText.text = lastText;
-	} else {
-		const wasText = pixiText.text;
-		let words = getSplitedWords(wasText);
-		const breaks = getBreaks(pixiText, words);
-		const signSize = calcSignSize(pixiText);
-		setPropertiesForCopy(pixiText);
-		const newLinesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize['\n'].height);
-		const newSpacesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize[' '].width);
-		let lastText = getSingLine(newLinesAmount, '\n');
-		for (let str of breaks) {
-			lastText += getSingLine(newSpacesAmount, ' ') + str + getSingLine(newSpacesAmount, ' ') + '\n';
-		}
-		lastText += getSingLine(newLinesAmount - 1, '\n');
-		pixiText.text = lastText;
 	}
+	const breaks = getBreaks(pixiText, words);
+	const signSize = calcSignSize(pixiText);
+	setPropertiesForCopy(pixiText);
+	const newLinesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize['\n'].height);
+	const newSpacesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize[' '].width);
+	let lastText = getSingLine(newLinesAmount, '\n');
+	for (let str of breaks) {
+		lastText += getSingLine(newSpacesAmount, ' ') + str + getSingLine(newSpacesAmount, ' ') + '\n';
+	}
+	lastText += getSingLine(newLinesAmount - 1, '\n');
+	pixiText.text = lastText;
+
+	///set scale properties
+
+	pixiText.y = -newLinesAmount * signSize['\n'].height;
+	pixiText.x = -newSpacesAmount * signSize[' '].width;
+
+	const coefficientWidth = pixiText.width / (pixiText.width + pixiText.x * 2);
+	const coefficientHeight = pixiText.height / (pixiText.height + pixiText.y * 2);
+	pixiText.width = originalText.width * coefficientWidth;
+	pixiText.height = originalText.height * coefficientHeight;
+	pixiText.x = -(pixiText.width - originalText.width) / 2;
+	pixiText.y = -(pixiText.height - originalText.height) / 2;
+	const anchorX = (originalText.anchor.x * originalText.width) / pixiText.width;
+	const anchorY = (originalText.anchor.y * originalText.height) / pixiText.height;
+	pixiText.anchor.set(anchorX, anchorY);
+	pixiText.pivot.x = originalText.pivot.x;
+	pixiText.pivot.y = originalText.pivot.y;
 }
 
 const setPropertiesForCopy = function (pixiText) {
@@ -176,9 +179,9 @@ const calcSignSize = function (pixiText) {
 export default function (pixiText) {
 	const copy = createGoodCopy(pixiText);
 	if (copy) {
-		mainDecorations(copy);
-		copy.x = pixiText.x - (copy.width - pixiText.width) / 2;
-		copy.y = pixiText.y - (copy.height - pixiText.height) / 2;
+		mainDecorations(copy, pixiText);
+		copy.x += pixiText.x;
+		copy.y += pixiText.y;
 		return copy;
 	} else {
 		return pixiText;
