@@ -21,11 +21,14 @@ It works with **any textStyle properties**.
 **!!!WARNINGS!!!**
 
 1) The copy made by function create "modifiedText" with some properties according to "textToModify" object:
-	1)x,y position
-	2)width and height
-	3)anchor
-	4)pivot
-	5)text
+
+ - x,y position
+ - width and height
+ - anchor
+ - pivot
+ - text
+ - style
+ 
 	If you want to change this properties you should do it with "textToModify" object and than create a new copy by the "someName" function. All other properties you should implement with copy.
 	
 *you can change that by writting function by yourself (or you can write me and I will implement function adding to project )*
