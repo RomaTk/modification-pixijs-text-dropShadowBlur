@@ -67,7 +67,6 @@ const createGoodCopy = function (pixiText) {
 		let newStyle = Object.assign({}, style);
 		if (style.wordWrap == true) {
 			newText = deleteUnnecessarySymbols(pixiText.text, newStyle._whiteSpace);
-			newStyle.whiteSpace = 'pre';
 		}
 		return new pixiText.constructor(newText, newStyle);
 	} else {
@@ -119,6 +118,7 @@ const mainDecorations = function (pixiText, originalText) {
 		}
 	}
 	const breaks = getBreaks(pixiText, words);
+	pixiText.style.whiteSpace = 'pre';
 	const signSize = calcSignSize(pixiText);
 	setPropertiesForCopy(pixiText);
 	const newLinesAmount = Math.ceil(pixiText.style.dropShadowBlur / signSize['\n'].height);
