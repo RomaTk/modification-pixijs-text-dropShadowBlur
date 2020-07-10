@@ -8,10 +8,10 @@ const style = new PIXI.TextStyle({
 	align: "right",
 	dropShadow: true,
 	dropShadowAngle: 0,
-	dropShadowBlur: 54,
+	dropShadowBlur: 100,
 	dropShadowColor: "#cb009f",
 	dropShadowDistance: 0,
-	fill: "white",
+	fill: "blue",
 	fontFamily: "Helvetica",
 	fontSize: 100,
 	fontVariant: "small-caps",
@@ -20,25 +20,24 @@ const style = new PIXI.TextStyle({
 	lineHeight: 60,
 	lineJoin: "round",
 	stroke: "#f0b",
-	strokeThickness: 4,
+	strokeThickness: 0,
 	whiteSpace: "pre",
 	wordWrap: true,
 	breakWords: true,
 	wordWrapWidth: 1000
 });
-const modifiedText = new PIXI.Text('Some   Text', style);
+const modifiedText = new PIXI.Text('Big win', style);
 modifiedText.x = 50;
 modifiedText.y = 200;
-modifiedText.width = 300;
-modifiedText.anchor.set(0, 0.8);
-modifiedText.pivot.y = 100;
-const modifiedCopy = modify(modifiedText);
+//modifiedText.width = 400;
+modifiedText.anchor.set(0.1, 0.7);
+modifiedText.pivot.y = 30;
+const modifiedCopy = modify(modifiedText, 2);
 const container = new PIXI.Container();
 container.x = 0;
-container.y = 0;
-container.width = 1000;
-container.height = 1000;
+container.y = 100;
+
 app.stage.addChild(container);
 container.addChild(modifiedCopy);
-modifiedCopy.y += 200;
-container.addChild(modifiedText);
+//modifiedCopy.y += 200;
+//container.addChild(modifiedText);

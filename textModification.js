@@ -62,16 +62,12 @@ const getSplitedWordsAccordingWidth = function (pixiText, words) {
 
 const createGoodCopy = function (pixiText) {
 	const style = pixiText.style;
-	if (style.dropShadow && style.dropShadowBlur) {
-		let newText = pixiText.text;
-		let newStyle = Object.assign({}, style);
-		if (style.wordWrap == true) {
-			newText = deleteUnnecessarySymbols(pixiText.text, newStyle._whiteSpace);
-		}
-		return new pixiText.constructor(newText, newStyle);
-	} else {
-		return;
+	let newText = pixiText.text;
+	let newStyle = Object.assign({}, style);
+	if (style.wordWrap == true) {
+		newText = deleteUnnecessarySymbols(pixiText.text, newStyle._whiteSpace);
 	}
+	return new pixiText.constructor(newText, newStyle);
 }
 
 const getBreaks = function (pixiText, words) {
@@ -109,7 +105,7 @@ const getSingLine = function (amount, sign) {
 	return text;
 }
 
-const mainDecorations = function (pixiText, originalText) {
+const mainDecorations = function (pixiText, originalText, isChildObject) {
 	const wasText = pixiText.text;
 	let words = getSplitedWords(wasText);
 	if (pixiText.style.wordWrap) {
@@ -132,20 +128,22 @@ const mainDecorations = function (pixiText, originalText) {
 
 	///set scale properties
 
-	pixiText.y = -newLinesAmount * signSize['\n'].height;
-	pixiText.x = -newSpacesAmount * signSize[' '].width;
+	if (!isChildObject) {
+		pixiText.y = -newLinesAmount * signSize['\n'].height;
+		pixiText.x = -newSpacesAmount * signSize[' '].width;
 
-	const coefficientWidth = pixiText.width / (pixiText.width + pixiText.x * 2);
-	const coefficientHeight = pixiText.height / (pixiText.height + pixiText.y * 2);
-	pixiText.width = originalText.width * coefficientWidth;
-	pixiText.height = originalText.height * coefficientHeight;
-	pixiText.x = -(pixiText.width - originalText.width) / 2;
-	pixiText.y = -(pixiText.height - originalText.height) / 2;
-	const anchorX = (originalText.anchor.x * originalText.width) / pixiText.width;
-	const anchorY = (originalText.anchor.y * originalText.height) / pixiText.height;
-	pixiText.anchor.set(anchorX, anchorY);
-	pixiText.pivot.x = originalText.pivot.x;
-	pixiText.pivot.y = originalText.pivot.y;
+		const coefficientWidth = pixiText.width / (pixiText.width + pixiText.x * 2);
+		const coefficientHeight = pixiText.height / (pixiText.height + pixiText.y * 2);
+		pixiText.width = originalText.width * coefficientWidth;
+		pixiText.height = originalText.height * coefficientHeight;
+		pixiText.x = -(pixiText.width - originalText.width) / 2;
+		pixiText.y = -(pixiText.height - originalText.height) / 2;
+		const anchorX = (originalText.anchor.x * originalText.width) / pixiText.width;
+		const anchorY = (originalText.anchor.y * originalText.height) / pixiText.height;
+		pixiText.anchor.set(anchorX, anchorY);
+		pixiText.pivot.x = originalText.pivot.x;
+		pixiText.pivot.y = originalText.pivot.y;
+	}
 }
 
 const setPropertiesForCopy = function (pixiText) {
@@ -176,14 +174,22 @@ const calcSignSize = function (pixiText) {
 	return returnObject;
 }
 
-export default function (pixiText) {
+export default function (pixiText, intenseShadow) {
 	const copy = createGoodCopy(pixiText);
-	if (copy) {
-		mainDecorations(copy, pixiText);
-		copy.x += pixiText.x;
-		copy.y += pixiText.y;
-		return copy;
-	} else {
-		return pixiText;
+	mainDecorations(copy, pixiText, false);
+	copy.x += pixiText.x;
+	copy.y += pixiText.y;
+	if (intenseShadow) {
+		for (let i = 0; i < intenseShadow; i += 1) {
+			const newCopy = createGoodCopy(pixiText);
+			mainDecorations(newCopy, pixiText, true);
+			copy.addChild(newCopy);
+			newCopy.anchor.x = 0;
+			newCopy.anchor.y = 0;
+			newCopy.pivot.y = newCopy.height * copy.anchor.y;
+			newCopy.pivot.x = newCopy.width * copy.anchor.x;
+		}
 	}
+
+	return copy;
 }
