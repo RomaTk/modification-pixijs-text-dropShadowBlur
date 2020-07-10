@@ -8,10 +8,10 @@ const style = new PIXI.TextStyle({
 	align: "right",
 	dropShadow: true,
 	dropShadowAngle: 0,
-	dropShadowBlur: 100,
+	dropShadowBlur: 500,
 	dropShadowColor: "#cb009f",
 	dropShadowDistance: 0,
-	fill: "blue",
+	fill: "hsla(120,100%,50%,1)",
 	fontFamily: "Helvetica",
 	fontSize: 100,
 	fontVariant: "small-caps",
@@ -32,7 +32,7 @@ modifiedText.y = 200;
 //modifiedText.width = 400;
 modifiedText.anchor.set(0.1, 0.7);
 modifiedText.pivot.y = 30;
-const modifiedCopy = modify(modifiedText, 2);
+const modifiedCopy = modify(modifiedText, 0);
 const container = new PIXI.Container();
 container.x = 0;
 container.y = 100;

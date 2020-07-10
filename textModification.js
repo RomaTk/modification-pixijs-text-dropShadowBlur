@@ -179,16 +179,23 @@ export default function (pixiText, intenseShadow) {
 	mainDecorations(copy, pixiText, false);
 	copy.x += pixiText.x;
 	copy.y += pixiText.y;
-	if (intenseShadow) {
+	if (intenseShadow && intenseShadow > 0) {
 		for (let i = 0; i < intenseShadow; i += 1) {
 			const newCopy = createGoodCopy(pixiText);
 			mainDecorations(newCopy, pixiText, true);
 			copy.addChild(newCopy);
+			if (i < intenseShadow - 1) {
+				newCopy.style.fill = 'hsla(0,0%,0%,0)';
+			}
+			if (copy.style.dropShadowBlur) {
+				newCopy.style.dropShadowBlur = Number(newCopy.style.dropShadowBlur) / (intenseShadow + 1) * (i + 1);
+			}
 			newCopy.anchor.x = 0;
 			newCopy.anchor.y = 0;
 			newCopy.pivot.y = newCopy.height * copy.anchor.y;
 			newCopy.pivot.x = newCopy.width * copy.anchor.x;
 		}
+		copy.style.fill = 'hsla(0,0%,0%,0)';
 	}
 
 	return copy;
